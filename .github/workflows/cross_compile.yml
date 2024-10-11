@@ -60,7 +60,7 @@ jobs:
         with:
           name: realm-${{ matrix.target }}
           path: |
-            target/${{ matrix.target }}/release/librealm.lib
+            target/${{ matrix.target }}/release/realm.lib
             target/${{ matrix.target }}/release/librealm.h
   build-windows:
     runs-on: windows-latest
@@ -86,7 +86,7 @@ jobs:
         with:
           name: realm-${{ matrix.target }}
           path: |
-            target/${{ matrix.target }}/release/librealm.lib
+            target/${{ matrix.target }}/release/realm.lib
             target/${{ matrix.target }}/release/librealm.h
   build-apple:
     runs-on: macos-latest
