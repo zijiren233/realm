@@ -35,19 +35,23 @@ jobs:
       - name: install cross
         run: cargo install cross --git https://github.com/cross-rs/cross
       - name: compile
-        run: cross build --release --target=${{ matrix.target }}
+        run: cross build --release --lib --target=${{ matrix.target }}
+      - name: cbindgen
+        run: |
+          cargo install --force cbindgen
+          cbindgen --config cbindgen.toml --crate realm --output ../target/${{ matrix.target }}/release/librealm.h
       - name: pack unix binary
         if: "!contains(matrix.target, 'windows')"
         run: |
           mkdir -p release-${{ matrix.target }}
           cd release-${{ matrix.target }}
-          tar -C ../target/${{ matrix.target }}/release -zcf realm-${{ matrix.target }}.tar.gz realm
+          tar -C ../target/${{ matrix.target }}/release -zcf realm-${{ matrix.target }}.tar.gz librealm.a librealm.h
       - name: pack windows binary
         if: "contains(matrix.target, 'windows')"
         run: |
           mkdir -p release-${{ matrix.target }}
           cd release-${{ matrix.target }}
-          tar -C ../target/${{ matrix.target }}/release -zcf realm-${{ matrix.target }}.tar.gz realm.exe
+          tar -C ../target/${{ matrix.target }}/release -zcf realm-${{ matrix.target }}.tar.gz librealm.lib librealm.h
       - name: add signature
         run: |
           cd release-${{ matrix.target }}
@@ -72,12 +76,16 @@ jobs:
             toolchain: nightly
             targets: ${{ matrix.target }}
       - name: compile
-        run: cargo build --release --target=${{ matrix.target }}
+        run: cargo build --release --lib --target=${{ matrix.target }}
+      - name: cbindgen
+        run: |
+          cargo install --force cbindgen
+          cbindgen --config cbindgen.toml --crate realm --output ../target/${{ matrix.target }}/release/librealm.h
       - name: pack
         run: |
           mkdir -p release-${{ matrix.target }}
           cd release-${{ matrix.target }}
-          tar -C ../target/${{ matrix.target }}/release/ -zcf realm-${{ matrix.target }}.tar.gz realm.exe
+          tar -C ../target/${{ matrix.target }}/release/ -zcf realm-${{ matrix.target }}.tar.gz librealm.lib librealm.h
           openssl dgst -sha256 -r realm-${{ matrix.target }}.tar.gz > realm-${{ matrix.target }}.sha256
       - name: release
         uses: softprops/action-gh-release@v1
@@ -101,12 +109,16 @@ jobs:
             toolchain: nightly
             targets: ${{ matrix.target }}
       - name: compile
-        run: cargo build --release --target=${{ matrix.target }}
+        run: cargo build --release --lib --target=${{ matrix.target }}
+      - name: cbindgen
+        run: |
+          cargo install --force cbindgen
+          cbindgen --config cbindgen.toml --crate realm --output ../target/${{ matrix.target }}/release/librealm.h
       - name: pack
         run: |
           mkdir -p release-${{ matrix.target }}
           cd release-${{ matrix.target }}
-          tar -C ../target/${{ matrix.target }}/release/ -zcf realm-${{ matrix.target }}.tar.gz realm
+          tar -C ../target/${{ matrix.target }}/release/ -zcf realm-${{ matrix.target }}.tar.gz librealm.a librealm.h
           shasum -a 256 realm-${{ matrix.target }}.tar.gz > realm-${{ matrix.target }}.sha256
       - name: release
         uses: softprops/action-gh-release@v1

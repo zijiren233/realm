@@ -41,19 +41,27 @@ jobs:
       - name: install cross
         run: cargo install cross --git https://github.com/cross-rs/cross
       - name: compile
-        run: cross build --release --target=${{ matrix.target }}
+        run: cross build --release --lib --target=${{ matrix.target }}
+      - name: cbindgen
+        run: |
+          cargo install --force cbindgen
+          cbindgen --config cbindgen.toml --crate realm --output target/${{ matrix.target }}/release/librealm.h
       - name: upload unix binary
         if: "!contains(matrix.target, 'windows')"
         uses: actions/upload-artifact@v4
         with:
           name: realm-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/realm
+          path: |
+            target/${{ matrix.target }}/release/librealm.a
+            target/${{ matrix.target }}/release/librealm.h
       - name: upload windows binary
         if: "contains(matrix.target, 'windows')"
         uses: actions/upload-artifact@v4
         with:
           name: realm-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/realm.exe
+          path: |
+            target/${{ matrix.target }}/release/librealm.lib
+            target/${{ matrix.target }}/release/librealm.h
   build-windows:
     runs-on: windows-latest
     strategy:
@@ -68,12 +76,18 @@ jobs:
             toolchain: nightly
             targets: ${{ matrix.target }}
       - name: compile
-        run: cargo build --release --target=${{ matrix.target }}
+        run: cargo build --release --lib --target=${{ matrix.target }}
+      - name: cbindgen
+        run: |
+          cargo install --force cbindgen
+          cbindgen --config cbindgen.toml --crate realm --output target/${{ matrix.target }}/release/librealm.h
       - name: upload
         uses: actions/upload-artifact@v4
         with:
           name: realm-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/realm.exe
+          path: |
+            target/${{ matrix.target }}/release/librealm.lib
+            target/${{ matrix.target }}/release/librealm.h
   build-apple:
     runs-on: macos-latest
     strategy:
@@ -90,9 +104,15 @@ jobs:
             toolchain: nightly
             targets: ${{ matrix.target }}
       - name: compile
-        run: cargo build --release --target=${{ matrix.target }}
+        run: cargo build --release --lib --target=${{ matrix.target }}
+      - name: cbindgen
+        run: |
+          cargo install --force cbindgen
+          cbindgen --config cbindgen.toml --crate realm --output target/${{ matrix.target }}/release/librealm.h
       - name: upload
         uses: actions/upload-artifact@v4
         with:
           name: realm-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/realm
+          path: |
+            target/${{ matrix.target }}/release/librealm.a
+            target/${{ matrix.target }}/release/librealm.h

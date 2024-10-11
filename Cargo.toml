@@ -6,18 +6,13 @@ edition = "2021"
 
 
 [workspace]
-members = [
-    "realm_io",
-    "realm_lb",
-    "realm_core",
-    "realm_hook",
-    "realm_syscall"
-]
+members = ["realm_io", "realm_lb", "realm_core", "realm_hook", "realm_syscall"]
 
 
 [lib]
 name = "realm"
 path = "src/lib.rs"
+crate-type = ["staticlib"]
 
 [[bin]]
 name = "realm"
@@ -25,6 +20,8 @@ path = "src/bin.rs"
 
 
 [dependencies]
+libc = "0.2"
+once_cell = "1.20.2"
 # realm
 realm_core = { path = "realm_core" }
 
@@ -61,7 +58,14 @@ tokio = { version = "1", features = ["macros"] }
 
 
 [features]
-default = ["proxy", "balance", "multi-thread", "transport", "batched-udp", "brutal-shutdown"]
+default = [
+    "proxy",
+    "balance",
+    "multi-thread",
+    "transport",
+    "batched-udp",
+    "brutal-shutdown",
+]
 hook = ["realm_core/hook"]
 proxy = ["realm_core/proxy"]
 brutal-shutdown = ["realm_core/brutal-shutdown"]
