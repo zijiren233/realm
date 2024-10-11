@@ -45,6 +45,7 @@ jobs:
       - name: cbindgen
         run: |
           cargo install --force cbindgen
+          ls target/${{ matrix.target }}/release/
           cbindgen --config cbindgen.toml --crate realm --output target/${{ matrix.target }}/release/librealm.h
       - name: upload unix binary
         if: "!contains(matrix.target, 'windows')"
