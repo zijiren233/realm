@@ -41,18 +41,10 @@ jobs:
           cargo install --force cbindgen
           cbindgen --config cbindgen.toml --crate realm --output ../target/${{ matrix.target }}/release/librealm.h
       - name: pack unix binary
-        if: "!contains(matrix.target, 'windows')"
         run: |
           mkdir -p release-${{ matrix.target }}
           cd release-${{ matrix.target }}
           tar -C ../target/${{ matrix.target }}/release -zcf realm-${{ matrix.target }}.tar.gz librealm.a librealm.h
-      - name: pack windows binary
-        if: "contains(matrix.target, 'windows')"
-        run: |
-          mkdir -p release-${{ matrix.target }}
-          cd release-${{ matrix.target }}
-          ls ../target/${{ matrix.target }}/release/
-          tar -C ../target/${{ matrix.target }}/release -zcf realm-${{ matrix.target }}.tar.gz realm.lib librealm.h
       - name: add signature
         run: |
           cd release-${{ matrix.target }}

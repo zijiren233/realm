@@ -45,23 +45,13 @@ jobs:
       - name: cbindgen
         run: |
           cargo install --force cbindgen
-          ls target/${{ matrix.target }}/release/
           cbindgen --config cbindgen.toml --crate realm --output target/${{ matrix.target }}/release/librealm.h
       - name: upload unix binary
-        if: "!contains(matrix.target, 'windows')"
         uses: actions/upload-artifact@v4
         with:
           name: realm-${{ matrix.target }}
           path: |
             target/${{ matrix.target }}/release/librealm.a
-            target/${{ matrix.target }}/release/librealm.h
-      - name: upload windows binary
-        if: "contains(matrix.target, 'windows')"
-        uses: actions/upload-artifact@v4
-        with:
-          name: realm-${{ matrix.target }}
-          path: |
-            target/${{ matrix.target }}/release/realm.lib
             target/${{ matrix.target }}/release/librealm.h
   build-windows:
     runs-on: windows-latest
